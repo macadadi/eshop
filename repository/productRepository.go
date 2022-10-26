@@ -1,4 +1,4 @@
-package product
+package repository
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 
 const (
 	allProducts = "SELECT id,name,price FROM products"
-	deleteProduct = "DELETE * FROM products WHERE id= ?"
-	findById =  allProducts + "WHERE id= ?"
-	saveProduct = "INSERT INTO products(name, price) values (?,?)"
-	updateProduct = "UPDATE products SET name = ?, price =? WHERE id =?"
+	deleteProduct = "DELETE * FROM products WHERE id= $1"
+	findById =  allProducts + " WHERE id= $1"
+	saveProduct = "INSERT INTO products (name, price, id) values ($1,$2,$3)"
+	updateProduct = "UPDATE products SET name = $1, price =$2 WHERE id =$3"
 )
 
 
@@ -34,39 +34,40 @@ func NewProductRepository()*AppProductRepository{
 }
 
 func(s *AppProductRepository)ListProducts(ctx context.Context, db db.DB)([]*model.Product,error){
-	rows, error := db.QueryContext(ctx ,allProducts)
+	rows, err := db.QueryContext(ctx ,allProducts)
 
-	if error != nil{
-		return  []*model.Product{},error
+	if err != nil{
+		return  []*model.Product{},err
 	}
 	var products = make([]*model.Product, 0)
+
 	defer rows.Close()
   	for rows.Next(){
-		var product *model.Product
-		error := rows.Scan(&product.Id,
-			&product.Name,
-			&product.Price,
+		var prod model.Product
+		err := rows.Scan(&prod.Id,
+			&prod.Name,
+			&prod.Price,
 		)
-		if error != nil {
-			return []*model.Product{},error
+		if err != nil {
+			return []*model.Product{},err
 		}
-		products = append(products, product)
+		products = append(products, &prod)
 	}
 	return products,nil
 }
 
 func(s *AppProductRepository)FindProductByID(ctx context.Context, db db.DB, id int64)(*model.Product,error){
-	var product *model.Product
+	var product model.Product
 	row := db.QueryRowContext(ctx,findById, id)
-	error := row.Scan(
+	err := row.Scan(
 		&product.Id,
 		&product.Name,
 		&product.Price,
 	)
-	if error != nil{
-		return &model.Product{},error
+	if err != nil{
+		return &model.Product{}, errors.New(err.Error())
 	}
-	return product,nil
+	return &product,nil
 }
 
 func(s *AppProductRepository)DeleteProduct(ctx context.Context, db db.DB, id int64)error{
@@ -99,7 +100,7 @@ func (s *AppProductRepository)UpdateProduct(ctx context.Context, db db.DB, form 
 }
 
 func(s *AppProductRepository)SaveProduct(ctx context.Context,db db.DB,form *form.ProductForm)error{
-     _,err := db.ExecContext(ctx, saveProduct, form.Name,form.Price)
+     _,err := db.ExecContext(ctx, saveProduct, form.Name,form.Price,form.Id)
 	 
 	 if err != nil{
 		return err

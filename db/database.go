@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"os"
+
+	_ "github.com/lib/pq"
 )
 
 type(
@@ -22,7 +23,8 @@ type(
 )
 
 func InitDB()DB{
-	url := os.Getenv("DATABASE_URL")
+
+	url := "postgres://postgres:postgres@localhost/product?sslmode=disable"
 	if url == ""{
 		log.Fatal("No url in environment")
 	}
@@ -38,8 +40,12 @@ func initDbWithUrl(s string)DB{
 }
 
 func initAppDB(url string)*sql.DB{
-	db,err := sql.Open("postgresql",url)
+	db,err := sql.Open("postgres",url)
 
+	if err != nil{
+		log.Panic(err)
+	}
+	err = db.Ping()
 	if err != nil{
 		log.Panic(err)
 	}
