@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -23,8 +25,10 @@ type(
 )
 
 func InitDB()DB{
-
-	url := "postgres://postgres:postgres@localhost/product?sslmode=disable"
+  if err := godotenv.Load(); err != nil{
+	log.Fatal("could not load environment file")
+  }
+	url := os.Getenv("DATABASE_URL")
 	if url == ""{
 		log.Fatal("No url in environment")
 	}

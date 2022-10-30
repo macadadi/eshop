@@ -18,7 +18,7 @@ func main(){
 
 	route := gin.New()
 	route.Use(gin.Logger())
-	
+
 	productRepository := repository.NewProductRepository()
 
 	productService := services.NewProductService(productRepository)
@@ -33,6 +33,6 @@ func main(){
 		Addr: Port,
 		Handler: route,
 	}
-	
+
 	log.Fatal(server.ListenAndServe())
 }

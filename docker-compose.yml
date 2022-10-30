@@ -1,17 +1,17 @@
 version: "3.8"
 services:
-    db:
-        container_name: eshop
+    psdatabase:
+        container_name: pseshop
         image: postgres:14.1-alpine
         restart: always
         environment:
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=postgres
-            - POSTGRES_DB=e_shop
+            - POSTGRES_USER=eshop
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=eshop_backend
         ports:
-            - "5432:5432"
+            - "5002:5432"
         volumes:
-            - db:/var/lib/postgresql/data
+            - psdatabase:/var/lib/postgresql/data
 volumes:
-    db:
-        driver: local
+    psdatabase:
+
