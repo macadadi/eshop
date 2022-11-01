@@ -17,7 +17,7 @@ migrate:
 	make migrate-up-by-one
 
 rollback:
-	goose -dir '/db/migrations' postgres ${DATABASE_URL} down
+	goose -dir 'db/migrations' postgres ${DATABASE_URL} down
 
 init-migration:
 	goose -dir db/migrations create init sql

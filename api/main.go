@@ -23,7 +23,12 @@ func main(){
 
 	productService := services.NewProductService(productRepository)
 
+	userRepo := repository.NewUserRepository()
+
+	userService := services.NewUserService(userRepo)
+
 	product.Endpoints(route,db,productService)
+	product.UserEndpoints(route,db,userService)
 
 	route.NoRoute(func(ctx *gin.Context) {
 		ctx.IndentedJSON(http.StatusNotFound,gin.H{"err_message":"end point not found try again later "})
