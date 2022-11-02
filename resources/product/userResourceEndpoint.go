@@ -9,5 +9,4 @@ import (
 func UserEndpoints(route *gin.Engine,db db.DB, s *services.UserService){
 	route.GET("/users", GetAllUsers(db, s))
 	route.POST("/user", AddUser(db, s))
-
 }

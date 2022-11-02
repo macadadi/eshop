@@ -8,7 +8,7 @@ import (
 
 func Endpoints(route *gin.Engine, db db.DB, s *services.AppProductService){
 	route.GET("/product",GetProduct(db,s))
-	route.POST("/product",SaveProduct(db,s))
+	route.POST("/product/:id",SaveProduct(db,s))
 	route.PUT("/product",UpdateProduct(db,s))
 	route.GET("/product/:id",GetSingleProduct(db,s))
 }

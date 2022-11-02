@@ -13,7 +13,7 @@ const (
 	allProducts = "SELECT id,name,price FROM products"
 	deleteProduct = "DELETE * FROM products WHERE id= $1"
 	findById =  allProducts + " WHERE id= $1"
-	saveProduct = "INSERT INTO products (name, price) values ($1,$2)"
+	saveProduct = "INSERT INTO products (name, price, user_id) values ($1,$2,$3)"
 	updateProduct = "UPDATE products SET name = $1, price =$2 WHERE id =$3"
 )
 
@@ -100,7 +100,7 @@ func (s *AppProductRepository)UpdateProduct(ctx context.Context, db db.DB, form 
 }
 
 func(s *AppProductRepository)SaveProduct(ctx context.Context,db db.DB,form *form.ProductForm)error{
-     _,err := db.ExecContext(ctx, saveProduct, form.Name,form.Price)
+     _,err := db.ExecContext(ctx, saveProduct, form.Name,form.Price, form.User_id)
 	 
 	 if err != nil{
 		return err

@@ -32,9 +32,14 @@ func GetProduct(db db.DB, s *services.AppProductService)func(c *gin.Context){
 func SaveProduct(db db.DB, s *services.AppProductService)func(c *gin.Context){
 	return func(c *gin.Context) {
 		var form *form.ProductForm
+		userId, err := strconv.ParseInt(c.Param("id"),32,64)
+		if err != nil{
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
 ctx := c.Request.Context()
-		err := c.BindJSON(&form)
-
+		err = c.BindJSON(&form)
+		form.User_id = userId
 		if err != nil{
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
@@ -45,7 +50,7 @@ ctx := c.Request.Context()
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message":"Successfully added the data"})
+		c.JSON(http.StatusOK, gin.H{"message":"Successfully added product"})
 }
 }
 
@@ -73,7 +78,11 @@ func UpdateProduct(db db.DB, s *services.AppProductService)func(c *gin.Context){
 func GetSingleProduct(db db.DB, s *services.AppProductService)func(c *gin.Context){
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		id,_:= strconv.ParseInt(c.Param("id"),0,64)
+		id, err:= strconv.ParseInt(c.Param("id"),0,64)
+		if err != nil{
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
 		prod, err := s.GetSingleProduct(ctx, db, id)
 		if err != nil{
 			c.JSON(http.StatusBadRequest,err)
